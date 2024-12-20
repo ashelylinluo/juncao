@@ -1,0 +1,30 @@
+# Install required packages if not already installed
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+if (!requireNamespace("UpSetR", quietly = TRUE))
+  install.packages("UpSetR")
+if (!requireNamespace("circlize", quietly = TRUE))
+  install.packages("circlize")
+
+# Load required libraries
+library(UpSetR)
+library(circlize)
+library(dplyr)
+library(readr)
+
+# Read the data
+data <- read.csv("D:/4four_year/20241203encode/20241203encode_utf8/classified_annotations.csv")
+
+# 1. Create UpSet plot
+# First, let's create a list of sets based on annotation
+annotations <- split(data$geneId, data$general_annotation)
+upset_data <- fromList(annotations)
+
+# Create the UpSet plot
+pdf("upset_plot.pdf", width = 10, height = 6)
+upset(upset_data,
+      nsets = length(unique(data$general_annotation)),
+      order.by = "freq",
+      main.bar.color = "darkblue",
+      sets.bar.color = "darkred")
+dev.off()
