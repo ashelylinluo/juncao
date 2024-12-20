@@ -1,0 +1,34 @@
+# 加载必要的包
+library(ggplot2)
+library(dplyr)
+
+# 创建数据
+plot_data <- data.frame(
+  general_annotation = c("Promoter<=3kb", "Distal Intergenic", "Intron", "Exon", "Other"),
+  Count = c(73546, 172875, 6602, 1852, 409)
+)
+
+plot_data <- plot_data %>%
+  mutate(Percentage = Count / sum(Count) * 100)
+
+# 绘制环形图
+ggplot(plot_data, aes(x = 2, y = Count, fill = general_annotation)) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
+  coord_polar(theta = "y", start = 0) +
+  xlim(0.5, 2.5) +
+  theme_void() +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(hjust = 0.5, size = 16),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 14)
+  ) +
+  labs(
+    fill = "Annotation Type",
+    title = "Distribution of General Annotation"
+  ) +
+  scale_fill_brewer(palette = "Set3") +
+  geom_text(aes(
+    label = sprintf("%.1f%%", Percentage),
+    y = cumsum(Count) - Count / 2
+  ), color = "black", size = 4)
